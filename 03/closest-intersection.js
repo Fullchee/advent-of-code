@@ -12,34 +12,38 @@ const wires = [];
 function getClosestIntersection(wires) {
     const [first, second] = getAllPoints(wires);
 
-    const intersections = [...first].filter(x => second.has(x)).map((point) => {
-        const [x, y] = point.split(',');
-        return Math.abs(x) + Math.abs(y);
+    const intersections = Object.keys(first).filter({}.hasOwnProperty.bind(second)).map((point) => {
+        // part 1
+        // const [x, y] = point.split(',');
+        // return Math.abs(x) + Math.abs(y);
+
+        // part 2
+        return first[point] + second[point];
     });
 
-    
     const smallest = intersections.sort((a,b) => a - b)[0];
     console.log(smallest);
     return smallest; // return the min
 }
 
 function getAllPoints(wires) {
-    const memo = [new Set(), new Set()];
+    const memo = [{}, {}];
     const DX = {'L': -1, 'R': 1, 'U': 0, 'D': 0};
     const DY = {'L': 0, 'R': 0, 'U': 1, 'D': -1};
     // memo crossing with itself
     for (let j in wires) {
         const wire = wires[j];
-        let x = 0, y = 0;
+        let x = 0, y = 0, steps = 0;
         wire.forEach((path) => {
             const d = path[0];  // LRUD
             const n = parseInt(path.slice(1));  // steps
 
             for (let i = 0; i < n; i += 1) {
+                steps++;
                 x += DX[d]
                 y += DY[d]
                 const point = `${x},${y}`;
-                memo[j].add(point);
+                memo[j][point] = steps;
             }
         });
     }
